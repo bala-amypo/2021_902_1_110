@@ -1,8 +1,3 @@
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
 @Entity
 public class ResourceAllocation {
 
@@ -16,7 +11,17 @@ public class ResourceAllocation {
     @OneToOne
     private ResourceRequest request;
 
-    private LocalDateTime allocatedAt = LocalDateTime.now();
-    private Boolean conflictFlag = false;
-    private String notes;
+    private Boolean conflictFlag;
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
+    public void setRequest(ResourceRequest request) {
+        this.request = request;
+    }
+
+    public void setConflictFlag(Boolean conflictFlag) {
+        this.conflictFlag = conflictFlag;
+    }
 }

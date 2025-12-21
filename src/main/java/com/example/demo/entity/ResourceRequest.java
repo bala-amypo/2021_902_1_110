@@ -1,8 +1,3 @@
-package com.example.demo.entity;
-
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
 @Entity
 public class ResourceRequest {
 
@@ -11,13 +6,32 @@ public class ResourceRequest {
     private Long id;
 
     private String resourceType;
+    private String status;
 
     @ManyToOne
     private User requestedBy;
 
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private String purpose;
+    public Long getId() {
+        return id;
+    }
 
-    private String status = "PENDING";
+    public String getResourceType() {
+        return resourceType;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public User getRequestedBy() {
+        return requestedBy;
+    }
+
+    public void setRequestedBy(User user) {
+        this.requestedBy = user;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
