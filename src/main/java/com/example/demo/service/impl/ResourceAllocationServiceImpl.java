@@ -41,7 +41,7 @@ public class ResourceAllocationServiceImpl implements ResourceAllocationService 
 
         ResourceAllocation allocation = new ResourceAllocation();
         allocation.setRequest(request);
-        allocation.setResource(resources.get(0)); // FIRST_AVAILABLE
+        allocation.setResource(resources.get(0)); 
         allocation.setConflictFlag(false);
 
         return allocationRepository.save(allocation);
