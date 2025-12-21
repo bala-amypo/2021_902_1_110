@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResourceAllocationServiceImpl implements ResourceAllocationService {
+  public class ResourceAllocationServiceImpl implements ResourceAllocationService{
 
     private final ResourceRequestRepository requestRepository;
     private final ResourceRepository resourceRepository;

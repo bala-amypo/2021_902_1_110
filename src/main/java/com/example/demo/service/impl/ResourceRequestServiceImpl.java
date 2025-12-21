@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResourceRequestServiceImpl implements ResourceRequestService {
+  public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     private final ResourceRequestRepository requestRepository;
     private final UserRepository userRepository;
