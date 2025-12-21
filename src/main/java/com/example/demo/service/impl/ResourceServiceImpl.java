@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResourceServiceImpl implements ResourceService {
+  public class ResourceServiceImpl implements ResourceService{
 
     private final ResourceRepository resourceRepository;
 
