@@ -10,33 +10,30 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-  public class ResourceServiceImpl implements ResourceService{
+public class ResourceServiceImpl implements ResourceService {
 
-    private final ResourceRepository resourceRepository;
+    private final ResourceRepository repository;
 
-    public ResourceServiceImpl(ResourceRepository resourceRepository) {
-        this.resourceRepository = resourceRepository;
+    public ResourceServiceImpl(ResourceRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public Resource createResource(Resource resource) {
-        if (resourceRepository.existsByResourceName(resource.getResourceName())) {
+        if (repository.existsByResourceName(resource.getResourceName())) {
             throw new ValidationException("Resource already exists");
         }
-        if (resource.getCapacity() < 1) {
-            throw new ValidationException("Capacity must be >= 1");
-        }
-        return resourceRepository.save(resource);
+        return repository.save(resource);
     }
 
     @Override
     public Resource getResource(Long id) {
-        return resourceRepository.findById(id)
+        return repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
     @Override
     public List<Resource> getAllResources() {
-        return resourceRepository.findAll();
+        return repository.findAll();
     }
 }

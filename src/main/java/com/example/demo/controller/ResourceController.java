@@ -16,18 +16,8 @@ public class ResourceController {
         this.service = service;
     }
 
-    @PostMapping
-    public Resource create(@RequestBody Resource resource) {
-        return service.createResource(resource);
-    }
-
     @GetMapping
     public List<Resource> getAll() {
         return service.getAllResources();
-    }
-
-    @GetMapping("/{id}")
-    public Resource get(@PathVariable Long id) {
-        return service.getResource(id);
     }
 }
