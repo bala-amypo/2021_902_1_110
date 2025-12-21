@@ -13,6 +13,6 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Resource Allocation Optimizer API")
-                        .version("1.0"));
+                        .version("https://9548.pro604cr.amypo.ai/"));
     }
 }
