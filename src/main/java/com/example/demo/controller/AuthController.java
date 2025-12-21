@@ -24,4 +24,28 @@ public class AuthController {
     public User register(@RequestBody RegisterRequest request) {
         User user = new User();
         user.setFullName(request.getFullName());
-        user.
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setRole(request.getRole());
+
+        return userService.registerUser(user);
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@RequestBody LoginRequest request) {
+
+        User user = userService.getAllUsers()
+                .stream()
+                .filter(u -> u.getEmail().equals(request.getEmail()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+        String token = jwtUtil.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole()
+        );
+
+        return new AuthResponse(token);
+    }
+}
