@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.ResourceRequest;
 import com.example.demo.entity.User;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.exception.ValidationException;
 import com.example.demo.repository.ResourceRequestRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ResourceRequestService;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-  public class ResourceRequestServiceImpl implements ResourceRequestService {
+public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     private final ResourceRequestRepository requestRepository;
     private final UserRepository userRepository;
@@ -28,23 +27,21 @@ import java.util.List;
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (request.getStartTime().isAfter(request.getEndTime())) {
-            throw new ValidationException("Start time must be before end time");
-        }
-
         request.setRequestedBy(user);
-        return requestRepository.save(request);
-    }
+        request.setStatus("PENDING");
 
-    @Override
-    public List<ResourceRequest> getRequestsByUser(Long userId) {
-        return requestRepository.findByRequestedBy_Id(userId);
+        return requestRepository.save(request);
     }
 
     @Override
     public ResourceRequest getRequest(Long id) {
         return requestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Request not found"));
+    }
+
+    @Override
+    public List<ResourceRequest> getRequestsByUser(Long userId) {
+        return requestRepository.findByRequestedBy_Id(userId);
     }
 
     @Override
