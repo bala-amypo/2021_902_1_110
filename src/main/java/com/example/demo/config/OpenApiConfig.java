@@ -19,7 +19,7 @@ public class OpenApiConfig {
                         .version("1.0"))
                 .servers(List.of(
                         new Server()
-                                .url("http://9036.408procr.amypo.ai")
+                                .url("https://9036.408procr.amypo.ai/")
                                 .description("Backend Server")
                 ));
     }
