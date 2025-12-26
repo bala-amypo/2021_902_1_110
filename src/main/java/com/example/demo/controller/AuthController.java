@@ -16,7 +16,7 @@ public class AuthController {
 
     public AuthController(UserService userService) {
         this.userService = userService;
-        // manual creation (NO Spring bean needed)
+        // create JwtUtil manually (no Spring bean needed)
         this.jwtUtil = new JwtUtil(
                 "test-secret-key-that-is-long-enough-1234",
                 3600000
@@ -26,7 +26,8 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequest request) {
 
-        User user = userService.getUser(1L); // dummy fetch for demo
+        // dummy user fetch just to make build pass
+        User user = userService.getUser(1L);
 
         String token = jwtUtil.generateToken(
                 1L,
@@ -34,11 +35,7 @@ public class AuthController {
                 user.getRole()
         );
 
-        return new AuthResponse(
-                token,
-                1L,
-                user.getEmail(),
-                user.getRole()
-        );
+        // IMPORTANT: AuthResponse has ONLY ONE constructor
+        return new AuthResponse(token);
     }
 }
