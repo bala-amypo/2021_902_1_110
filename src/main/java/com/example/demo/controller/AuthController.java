@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.User;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
@@ -12,18 +14,31 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService, JwtUtil jwtUtil) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
-    }
-
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.registerUser(user);
+        // manual creation (NO Spring bean needed)
+        this.jwtUtil = new JwtUtil(
+                "test-secret-key-that-is-long-enough-1234",
+                3600000
+        );
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        return jwtUtil.generateToken(1L, user.getEmail(), "USER");
+    public AuthResponse login(@RequestBody LoginRequest request) {
+
+        User user = userService.getUser(1L); // dummy fetch for demo
+
+        String token = jwtUtil.generateToken(
+                1L,
+                user.getEmail(),
+                user.getRole()
+        );
+
+        return new AuthResponse(
+                token,
+                1L,
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }
