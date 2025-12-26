@@ -16,13 +16,14 @@ public class JwtUtil {
     }
 
     public String generateToken(Long userId, String email, String role) {
+
         long expiry = System.currentTimeMillis() + validityInMs;
 
         String payload = email + "|" + role + "|" + expiry;
         String encoded = Base64.getEncoder()
                 .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
 
-        // fake JWT format: header.payload.signature
+        // fake JWT format
         return "header." + encoded + ".signature";
     }
 
@@ -30,7 +31,9 @@ public class JwtUtil {
 
         try {
             String[] parts = token.split("\\.");
-            if (parts.length != 3) throw new RuntimeException("Invalid token");
+            if (parts.length != 3) {
+                throw new RuntimeException("Invalid token");
+            }
 
             String decoded = new String(
                     Base64.getDecoder().decode(parts[1]),
@@ -46,10 +49,17 @@ public class JwtUtil {
                 throw new RuntimeException("Token expired");
             }
 
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("sub", email);
-            claims.put("role", role);
-            return claims;
+            // 👇 Anonymous Map with getSubject()
+            return new HashMap<String, Object>() {
+                {
+                    put("sub", email);
+                    put("role", role);
+                }
+
+                public String getSubject() {
+                    return (String) get("sub");
+                }
+            };
 
         } catch (Exception e) {
             throw new RuntimeException("Invalid token");
