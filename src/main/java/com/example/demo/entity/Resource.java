@@ -1,14 +1,17 @@
 package com.example.demo.entity;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
+@Entity
 public class Resource {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String resourceName;
     private String resourceType;
     private Integer capacity;
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Resource() {}
 
@@ -23,6 +26,4 @@ public class Resource {
 
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
 }
