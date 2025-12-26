@@ -21,13 +21,13 @@ public class AllocationRuleController {
         return service.createRule(rule);
     }
 
-    @GetMapping
-    public List<AllocationRule> getAll() {
-        return service.getAllRules();
-    }
-
     @GetMapping("/{id}")
     public AllocationRule get(@PathVariable Long id) {
         return service.getRule(id);
+    }
+
+    @GetMapping
+    public List<AllocationRule> getAll() {
+        return service.getAllRules();
     }
 }

@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service   
+@Service   // 🔥 THIS IS REQUIRED
 public class AllocationRuleServiceImpl implements AllocationRuleService {
 
     private final AllocationRuleRepository repo;
 
-    
+    // ⚠️ DO NOT change constructor (tests depend on it)
     public AllocationRuleServiceImpl(AllocationRuleRepository repo) {
         this.repo = repo;
     }
