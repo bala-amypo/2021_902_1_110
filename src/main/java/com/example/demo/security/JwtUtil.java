@@ -1,68 +1,29 @@
 package com.example.demo.security;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import io.jsonwebtoken.*;
+import java.util.Date;
 
 public class JwtUtil {
 
     private final String secret;
-    private final long validityInMs;
+    private final long validity;
 
-    public JwtUtil(String secret, long validityInMs) {
+    public JwtUtil(String secret, long validity) {
         this.secret = secret;
-        this.validityInMs = validityInMs;
+        this.validity = validity;
     }
 
     public String generateToken(Long userId, String email, String role) {
-
-        long expiry = System.currentTimeMillis() + validityInMs;
-
-        String payload = email + "|" + role + "|" + expiry;
-        String encoded = Base64.getEncoder()
-                .encodeToString(payload.getBytes(StandardCharsets.UTF_8));
-
-        // fake JWT format
-        return "header." + encoded + ".signature";
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + validity))
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
     }
 
-    public Map<String, Object> parseClaims(String token) {
-
-        try {
-            String[] parts = token.split("\\.");
-            if (parts.length != 3) {
-                throw new RuntimeException("Invalid token");
-            }
-
-            String decoded = new String(
-                    Base64.getDecoder().decode(parts[1]),
-                    StandardCharsets.UTF_8
-            );
-
-            String[] values = decoded.split("\\|");
-            String email = values[0];
-            String role = values[1];
-            long expiry = Long.parseLong(values[2]);
-
-            if (System.currentTimeMillis() > expiry) {
-                throw new RuntimeException("Token expired");
-            }
-
-            // 👇 Anonymous Map with getSubject()
-            return new HashMap<String, Object>() {
-                {
-                    put("sub", email);
-                    put("role", role);
-                }
-
-                public String getSubject() {
-                    return (String) get("sub");
-                }
-            };
-
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid token");
-        }
+    public Claims parseClaims(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 }

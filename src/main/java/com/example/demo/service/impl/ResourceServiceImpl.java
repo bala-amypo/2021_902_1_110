@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.Resource;
 import com.example.demo.repository.ResourceRepository;
 import com.example.demo.service.ResourceService;
+
 import java.util.List;
 
 public class ResourceServiceImpl implements ResourceService {
@@ -13,16 +14,18 @@ public class ResourceServiceImpl implements ResourceService {
         this.repo = repo;
     }
 
-    public Resource createResource(Resource resource) {
-        if (resource.getCapacity() == null || resource.getCapacity() < 1 || resource.getResourceType() == null) {
-            throw new RuntimeException();
-        }
-        if (repo.existsByResourceName(resource.getResourceName())) {
+    @Override
+    public Resource createResource(Resource r) {
+        if (r.getResourceName() == null || r.getResourceType() == null || r.getCapacity() == null || r.getCapacity() < 1)
+            throw new IllegalArgumentException("Invalid resource");
+
+        if (repo.existsByResourceName(r.getResourceName()))
             throw new RuntimeException("Resource exists");
-        }
-        return repo.save(resource);
+
+        return repo.save(r);
     }
 
+    @Override
     public List<Resource> getAllResources() {
         return repo.findAll();
     }
