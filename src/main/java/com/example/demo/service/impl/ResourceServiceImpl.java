@@ -17,19 +17,19 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Resource createResource(Resource r) {
-        if (r.getResourceName() == null ||
-            r.getResourceType() == null ||
-            r.getCapacity() == null ||
-            r.getCapacity() < 1) {
+    public Resource createResource(Resource resource) {
+        if (resource.getResourceName() == null ||
+            resource.getResourceType() == null ||
+            resource.getCapacity() == null ||
+            resource.getCapacity() < 1) {
             throw new IllegalArgumentException("Invalid resource");
         }
 
-        if (repo.existsByResourceName(r.getResourceName())) {
+        if (repo.existsByResourceName(resource.getResourceName())) {
             throw new RuntimeException("Resource exists");
         }
 
-        return repo.save(r);
+        return repo.save(resource);
     }
 
     @Override

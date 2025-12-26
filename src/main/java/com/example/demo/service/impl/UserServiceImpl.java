@@ -23,8 +23,10 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("User already exists");
         }
 
-        user.setPassword(Base64.getEncoder()
-                .encodeToString(user.getPassword().getBytes()));
+        user.setPassword(
+                Base64.getEncoder()
+                        .encodeToString(user.getPassword().getBytes())
+        );
 
         if (user.getRole() == null) {
             user.setRole("USER");
