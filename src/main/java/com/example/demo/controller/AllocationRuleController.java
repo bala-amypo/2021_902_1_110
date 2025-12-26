@@ -17,17 +17,17 @@ public class AllocationRuleController {
     }
 
     @PostMapping
-    public AllocationRule createRule(@RequestBody AllocationRule rule) {
+    public AllocationRule create(@RequestBody AllocationRule rule) {
         return service.createRule(rule);
     }
 
-    @GetMapping
-    public List<AllocationRule> getAllRules() {
-        return service.getAllRules();
+    @GetMapping("/{id}")
+    public AllocationRule get(@PathVariable Long id) {
+        return service.getRule(id);
     }
 
-    @GetMapping("/{id}")
-    public AllocationRule getRule(@PathVariable Long id) {
-        return service.getRule(id);
+    @GetMapping
+    public List<AllocationRule> getAll() {
+        return service.getAllRules();
     }
 }
