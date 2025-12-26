@@ -1,9 +1,10 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.ResourceAllocation;
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ResourceAllocationRepository {
-    List<ResourceAllocation> findAll();
-    ResourceAllocation save(ResourceAllocation allocation);
+@Repository
+public interface ResourceAllocationRepository
+        extends JpaRepository<ResourceAllocation, Long> {
 }
