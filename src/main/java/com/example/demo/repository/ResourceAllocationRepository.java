@@ -7,11 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ResourceAllocationRepository {
-
-    List<ResourceAllocation> findAll();
-
-    Optional<ResourceAllocation> findById(Long id);
-
-    ResourceAllocation save(ResourceAllocation allocation);
+public interface ResourceAllocationRepository
+        extends JpaRepository<ResourceAllocation, Long> {
 }
+

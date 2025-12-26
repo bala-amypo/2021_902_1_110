@@ -7,15 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ResourceRepository {
+public interface ResourceRepository
+        extends JpaRepository<Resource, Long> {
 
     boolean existsByResourceName(String name);
-
-    List<Resource> findByResourceType(String type);
-
-    List<Resource> findAll();
-
-    Optional<Resource> findById(Long id);
-
-    Resource save(Resource resource);
 }
+

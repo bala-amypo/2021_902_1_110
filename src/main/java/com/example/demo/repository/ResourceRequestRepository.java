@@ -8,16 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ResourceRequestRepository {
-
-    List<ResourceRequest> findByRequestedBy_Id(Long userId);
-
-    List<ResourceRequest> findByStartTimeBetween(
-            LocalDateTime start,
-            LocalDateTime end
-    );
-
-    Optional<ResourceRequest> findById(Long id);
-
-    ResourceRequest save(ResourceRequest request);
+public interface ResourceRequestRepository
+        extends JpaRepository<ResourceRequest, Long> {
 }
