@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AllocationRuleServiceImpl implements AllocationRuleService {
+public class AllocationRuleServiceImpl
+        implements AllocationRuleService {
 
     private final AllocationRuleRepository repo;
 

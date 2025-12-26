@@ -15,8 +15,9 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
     private final ResourceRequestRepository reqRepo;
     private final UserRepository userRepo;
 
-    public ResourceRequestServiceImpl(ResourceRequestRepository reqRepo,
-                                      UserRepository userRepo) {
+    public ResourceRequestServiceImpl(
+            ResourceRequestRepository reqRepo,
+            UserRepository userRepo) {
         this.reqRepo = reqRepo;
         this.userRepo = userRepo;
     }
@@ -39,9 +40,9 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     @Override
     public ResourceRequest updateRequestStatus(Long id, String status) {
-        ResourceRequest r = reqRepo.findById(id)
+        ResourceRequest req = reqRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
-        r.setStatus(status);
-        return reqRepo.save(r);
+        req.setStatus(status);
+        return reqRepo.save(req);
     }
 }

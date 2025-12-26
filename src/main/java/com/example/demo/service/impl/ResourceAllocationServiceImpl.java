@@ -12,15 +12,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResourceAllocationServiceImpl implements ResourceAllocationService {
+public class ResourceAllocationServiceImpl
+        implements ResourceAllocationService {
 
     private final ResourceRequestRepository reqRepo;
     private final ResourceRepository resRepo;
     private final ResourceAllocationRepository allocRepo;
 
-    public ResourceAllocationServiceImpl(ResourceRequestRepository reqRepo,
-                                         ResourceRepository resRepo,
-                                         ResourceAllocationRepository allocRepo) {
+    public ResourceAllocationServiceImpl(
+            ResourceRequestRepository reqRepo,
+            ResourceRepository resRepo,
+            ResourceAllocationRepository allocRepo) {
         this.reqRepo = reqRepo;
         this.resRepo = resRepo;
         this.allocRepo = allocRepo;
@@ -31,16 +33,16 @@ public class ResourceAllocationServiceImpl implements ResourceAllocationService 
         ResourceRequest req = reqRepo.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("Request not found"));
 
-        List<Resource> resources =
+        List<Resource> list =
                 resRepo.findByResourceType(req.getResourceType());
 
-        if (resources.isEmpty()) {
+        if (list.isEmpty()) {
             throw new RuntimeException("No resource available");
         }
 
         ResourceAllocation alloc = new ResourceAllocation();
-        alloc.setResource(resources.get(0));
         alloc.setRequest(req);
+        alloc.setResource(list.get(0));
 
         return allocRepo.save(alloc);
     }
