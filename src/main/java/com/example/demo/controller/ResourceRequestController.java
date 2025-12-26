@@ -27,11 +27,6 @@ public class ResourceRequestController {
         return service.getRequestsByUser(userId);
     }
 
-    @GetMapping("/{id}")
-    public ResourceRequest get(@PathVariable Long id) {
-        return service.getRequest(id);
-    }
-
     @PutMapping("/status/{requestId}")
     public ResourceRequest updateStatus(@PathVariable Long requestId,
                                         @RequestParam String status) {

@@ -4,8 +4,6 @@ import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -16,13 +14,13 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping
-    public List<User> getAll() {
-        return service.getAllUsers();
+    @PostMapping("/register")
+    public User register(@RequestBody User user) {
+        return service.registerUser(user);
     }
 
     @GetMapping("/{id}")
-    public User get(@PathVariable Long id) {
+    public User getUser(@PathVariable Long id) {
         return service.getUser(id);
     }
 }

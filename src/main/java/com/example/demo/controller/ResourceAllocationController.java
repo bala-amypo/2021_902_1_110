@@ -25,9 +25,4 @@ public class ResourceAllocationController {
     public List<ResourceAllocation> getAll() {
         return service.getAllAllocations();
     }
-
-    @GetMapping("/{id}")
-    public ResourceAllocation get(@PathVariable Long id) {
-        return service.getAllocation(id);
-    }
 }
