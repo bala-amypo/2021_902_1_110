@@ -1,11 +1,3 @@
-package com.example.demo.controller;
-
-import com.example.demo.entity.AllocationRule;
-import com.example.demo.service.AllocationRuleService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/rules")
 public class AllocationRuleController {
@@ -14,20 +6,5 @@ public class AllocationRuleController {
 
     public AllocationRuleController(AllocationRuleService service) {
         this.service = service;
-    }
-
-    @PostMapping
-    public AllocationRule create(@RequestBody AllocationRule rule) {
-        return service.createRule(rule);
-    }
-
-    @GetMapping("/{id}")
-    public AllocationRule get(@PathVariable Long id) {
-        return service.getRule(id);
-    }
-
-    @GetMapping
-    public List<AllocationRule> getAll() {
-        return service.getAllRules();
     }
 }
