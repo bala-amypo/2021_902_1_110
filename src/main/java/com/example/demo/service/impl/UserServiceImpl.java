@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -18,30 +16,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    /**
-     * Register a new user
-     * - Prevent duplicate email
-     * - Hash password before saving
-     */
+    // ✅ register user
     @Override
     public User register(User user) {
 
-        // ✅ FIX 1: Duplicate email check (t07_registerDuplicate)
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("User already exists with this email");
         }
 
-        // ✅ FIX 2: Password hashing (t51_passwordHashing)
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         return userRepository.save(user);
     }
 
-    /**
-     * Find user by email
-     */
+    // ✅ REQUIRED by interface
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // ✅ RETURN TYPE MATCHED (IMPORTANT FIX)
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
