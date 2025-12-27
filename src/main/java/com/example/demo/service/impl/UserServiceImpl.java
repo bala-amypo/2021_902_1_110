@@ -3,36 +3,45 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
+    /**
+     * Register a new user
+     * - Prevent duplicate email
+     * - Hash password before saving
+     */
     @Override
-    public User saveUser(User user) {
+    public User register(User user) {
+
+        // ✅ FIX 1: Duplicate email check (t07_registerDuplicate)
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("User already exists with this email");
+        }
+
+        // ✅ FIX 2: Password hashing (t51_passwordHashing)
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         return userRepository.save(user);
     }
 
+    /**
+     * Find user by email
+     */
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    @Override
-    public User registerUser(User user) {
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }
