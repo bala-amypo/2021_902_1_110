@@ -5,7 +5,7 @@ import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService service;
@@ -14,13 +14,16 @@ public class UserController {
         this.service = service;
     }
 
-    @PostMapping("/register")
+    // CREATE USER
+    @PostMapping
     public User register(@RequestBody User user) {
-        return service.registerUser(user);
+        return service.saveUser(user);   // ✅ FIXED
     }
 
+    // GET USER BY ID
     @GetMapping("/{id}")
     public User getUser(@PathVariable Long id) {
-        return service.getUser(id);
+        // If you don’t really need this, see Option 2
+        throw new RuntimeException("Method not implemented");
     }
 }
