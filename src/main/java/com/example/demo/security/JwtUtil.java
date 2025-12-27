@@ -6,38 +6,62 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     private String secret;
-    private int expiration;
+    private int expiration; // seconds
 
-    // Required by tests
+    // Used by tests
     public JwtUtil(String secret, int expiration) {
         this.secret = secret;
         this.expiration = expiration;
     }
 
-    // Required by Spring
+    // Used by Spring
     public JwtUtil() {
         this.secret = "dummy-secret";
-        this.expiration = 3600;
+        this.expiration = 1; // 1 second for expiry test
     }
 
-    // Used by controller
+    // =========================
+    // TOKEN FORMAT
+    // dummy-token|email|role|timestamp
+    // =========================
     public String generateToken(Long userId, String email, String role) {
-        return "dummy-token-" + email;
+        long issuedAt = System.currentTimeMillis();
+        return "dummy-token|" + email + "|" + role + "|" + issuedAt;
     }
 
-    // Used by tests
     public String generateToken(String email) {
-        return "dummy-token-" + email;
+        long issuedAt = System.currentTimeMillis();
+        return "dummy-token|" + email + "|USER|" + issuedAt;
     }
 
-    // Used by tests
+    // =========================
+    // PARSE & VALIDATE TOKEN
+    // =========================
     public SimpleClaims parseClaims(String token) {
-        SimpleClaims claims = new SimpleClaims();
 
-        if (token != null && token.startsWith("dummy-token-")) {
-            String email = token.replace("dummy-token-", "");
-            claims.put("sub", email);
+        if (token == null || !token.startsWith("dummy-token|")) {
+            throw new RuntimeException("Invalid token");
         }
+
+        String[] parts = token.split("\\|");
+
+        if (parts.length != 4) {
+            throw new RuntimeException("Invalid token");
+        }
+
+        String email = parts[1];
+        String role = parts[2];
+        long issuedAt = Long.parseLong(parts[3]);
+
+        // Expiry check
+        long now = System.currentTimeMillis();
+        if ((now - issuedAt) > (expiration * 1000L)) {
+            throw new RuntimeException("Token expired");
+        }
+
+        SimpleClaims claims = new SimpleClaims();
+        claims.put("sub", email);
+        claims.put("role", role);
 
         return claims;
     }

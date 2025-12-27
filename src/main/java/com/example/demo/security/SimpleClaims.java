@@ -8,4 +8,9 @@ public class SimpleClaims extends HashMap<String, Object> {
         Object sub = this.get("sub");
         return sub != null ? sub.toString() : null;
     }
+
+    public String getRole() {
+        Object role = this.get("role");
+        return role != null ? role.toString() : null;
+    }
 }
