@@ -16,9 +16,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Core registration logic
+    // 🔥 REQUIRED BY TEST CASES (NO-ARG CONSTRUCTOR)
+    public UserServiceImpl() {
+    }
+
+    // Optional constructor (Spring can still use field injection)
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    // 🔥 REQUIRED METHOD BY TESTS
     @Override
-    public User register(User user) {
+    public User registerUser(User user) {
 
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("User already exists with this email");
@@ -28,10 +37,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    // 🔥 REQUIRED BY CONTROLLERS
+    // Used by controllers
     @Override
     public User saveUser(User user) {
-        return register(user);
+        return registerUser(user);
     }
 
     @Override

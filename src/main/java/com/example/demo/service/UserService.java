@@ -4,9 +4,10 @@ import com.example.demo.entity.User;
 
 public interface UserService {
 
-    User register(User user);
+    // REQUIRED BY TESTS
+    User registerUser(User user);
 
-    // 🔥 ADD THIS (required by controllers)
+    // Used by controllers
     User saveUser(User user);
 
     User getUser(Long id);
