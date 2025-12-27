@@ -14,15 +14,19 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    private String name;
+    private String password;
+
+    @Column(nullable = false)
+    private String role;
 
     // ===== Constructors =====
     public User() {
     }
 
-    public User(String email, String name) {
+    public User(String email, String password, String role) {
         this.email = email;
-        this.name = name;
+        this.password = password;
+        this.role = role;
     }
 
     // ===== Getters & Setters =====
@@ -42,11 +46,20 @@ public class User {
         this.email = email;
     }
 
-    public String getName() {
-        return name;
+    // 🔥 REQUIRED METHODS (Missing earlier)
+    public String getPassword() {
+        return password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
