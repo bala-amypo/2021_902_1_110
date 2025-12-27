@@ -1,49 +1,48 @@
 package com.example.demo.security;
 
-import java.util.Base64;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
+import java.security.Key;
+import java.util.Date;
+
+@Component   // ✅ THIS IS THE FIX
 public class JwtUtil {
 
-    private final String secret;
-    private final long validityMs;
+    private final Key key;
+    private final long expirationMs;
 
-    public JwtUtil(String secret, long validityMs) {
-        this.secret = secret;
-        this.validityMs = validityMs;
+    // Spring will use this constructor
+    public JwtUtil() {
+        this.key = Keys.hmacShaKeyFor(
+                "test-secret-key-that-is-long-enough-1234".getBytes()
+        );
+        this.expirationMs = 3600000; // 1 hour
+    }
+
+    // Existing constructor (used by tests)
+    public JwtUtil(String secret, long expirationMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.expirationMs = expirationMs;
     }
 
     public String generateToken(Long userId, String email, String role) {
-        long expiry = System.currentTimeMillis() + validityMs;
-        String payload = userId + "|" + email + "|" + role + "|" + expiry;
-        String encoded = Base64.getEncoder().encodeToString(payload.getBytes());
-        return "header." + encoded + ".signature";
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(key)
+                .compact();
     }
 
     public Claims parseClaims(String token) {
-        try {
-            String[] parts = token.split("\\.");
-            if (parts.length != 3) {
-                throw new RuntimeException("Invalid token");
-            }
-
-            String decoded =
-                    new String(Base64.getDecoder().decode(parts[1]));
-
-            String[] data = decoded.split("\\|");
-
-            long expiry = Long.parseLong(data[3]);
-            if (System.currentTimeMillis() > expiry) {
-                throw new RuntimeException("Token expired");
-            }
-
-            Long userId = Long.parseLong(data[0]);
-            String email = data[1];
-            String role = data[2];
-
-            return new Claims(email, role, userId);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Invalid token");
-        }
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
