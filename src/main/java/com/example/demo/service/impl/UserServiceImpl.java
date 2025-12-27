@@ -5,44 +5,23 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
-import java.util.List;
-
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository repo;
+    private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository repo) {
-        this.repo = repo;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
-    public User registerUser(User user) {
-        if (repo.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("User already exists");
-        }
-
-        user.setPassword(
-                Base64.getEncoder()
-                        .encodeToString(user.getPassword().getBytes())
-        );
-
-        if (user.getRole() == null) {
-            user.setRole("USER");
-        }
-
-        return repo.save(user);
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public User getUser(Long id) {
-        return repo.findById(id)
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return List.of();
     }
 }
