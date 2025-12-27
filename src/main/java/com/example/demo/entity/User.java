@@ -10,6 +10,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String fullName;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -19,23 +22,42 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    // ===== Constructors =====
+    // ✅ REQUIRED: No-arg constructor
     public User() {
     }
 
+    // ✅ REQUIRED: 3-arg constructor
     public User(String email, String password, String role) {
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
+    // ✅ REQUIRED: 4-arg constructor (USED BY TEST CASES)
+    public User(String fullName, String email, String password, String role) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     // ===== Getters & Setters =====
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    // 🔥 REQUIRED BY TEST CASES
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getEmail() {
@@ -46,7 +68,7 @@ public class User {
         this.email = email;
     }
 
-    // 🔥 REQUIRED METHODS (Missing earlier)
+    // 🔥 REQUIRED BY CONTROLLER
     public String getPassword() {
         return password;
     }
@@ -55,6 +77,7 @@ public class User {
         this.password = password;
     }
 
+    // 🔥 REQUIRED BY CONTROLLER
     public String getRole() {
         return role;
     }
