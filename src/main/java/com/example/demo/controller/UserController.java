@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,16 +15,15 @@ public class UserController {
         this.service = service;
     }
 
-    // CREATE USER
+    // ✅ CREATE USER (again: registerUser)
     @PostMapping
-    public User register(@RequestBody User user) {
-        return service.saveUser(user);   // ✅ FIXED
+    public User createUser(@RequestBody User user) {
+        return service.registerUser(user);
     }
 
-    // GET USER BY ID
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        // If you don’t really need this, see Option 2
-        throw new RuntimeException("Method not implemented");
+    // ✅ GET USER BY EMAIL (matches interface)
+    @GetMapping("/email/{email}")
+    public User getByEmail(@PathVariable String email) {
+        return service.findByEmail(email);
     }
 }
