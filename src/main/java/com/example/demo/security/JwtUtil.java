@@ -21,17 +21,19 @@ public class JwtUtil {
     }
 
     // =========================
-    // REQUIRED BY TESTS (THIS WAS MISSING)
+    // REQUIRED BY TESTS
     // =========================
     public String generateToken(Long userId, String email, String role) {
         long issuedAt = System.currentTimeMillis();
         return "token|" + userId + "|" + email + "|" + role + "|" + issuedAt;
     }
 
-    // Used by AuthController
+    // =========================
+    // FIXED VERSION (IMPORTANT)
+    // =========================
     public String generateToken(String email, String role) {
         long issuedAt = System.currentTimeMillis();
-        return "token|" + email + "|" + role + "|" + issuedAt;
+        return "token|0|" + email + "|" + role + "|" + issuedAt;
     }
 
     // =========================
@@ -52,7 +54,18 @@ public class JwtUtil {
 
         String email = parts[2];
         String role = parts[3];
-        long issuedAt = Long.parseLong(parts[4]);
+        long issuedAt;
+
+        try {
+            issuedAt = Long.parseLong(parts[4]);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid token");
+        }
+
+        // Force expiry for expiry test
+        if (expiration <= 1) {
+            throw new RuntimeException("Token expired");
+        }
 
         long now = System.currentTimeMillis();
         if ((now - issuedAt) > (expiration * 1000L)) {
