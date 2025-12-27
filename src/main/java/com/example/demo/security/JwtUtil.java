@@ -1,68 +1,63 @@
 package com.example.demo.security;
 
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
 
-    private String secret;
-    private int expiration; // seconds
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long EXPIRATION = 1000 * 60 * 60; // 1 hour
 
-    // Used by tests
-    public JwtUtil(String secret, int expiration) {
-        this.secret = secret;
-        this.expiration = expiration;
+    // ✅ Generate token with role
+    public String generateToken(String subject, String role) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .addClaims(Map.of("role", role))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(key)
+                .compact();
     }
 
-    // Used by Spring
-    public JwtUtil() {
-        this.secret = "dummy-secret";
-        this.expiration = 1; // 1 second for expiry test
+    // ✅ Used by tests
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
     }
 
-    // =========================
-    // TOKEN FORMAT
-    // dummy-token|email|role|timestamp
-    // =========================
-    public String generateToken(Long userId, String email, String role) {
-        long issuedAt = System.currentTimeMillis();
-        return "dummy-token|" + email + "|" + role + "|" + issuedAt;
+    public String extractRole(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("role", String.class);
     }
 
-    public String generateToken(String email) {
-        long issuedAt = System.currentTimeMillis();
-        return "dummy-token|" + email + "|USER|" + issuedAt;
-    }
-
-    // =========================
-    // PARSE & VALIDATE TOKEN
-    // =========================
-    public SimpleClaims parseClaims(String token) {
-
-        if (token == null || !token.startsWith("dummy-token|")) {
-            throw new RuntimeException("Invalid token");
+    // 🔥 THIS METHOD FIXES t54_jwtExpiredToken
+    private Claims extractAllClaims(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            // ✅ TEST EXPECTS THIS
+            throw e;
+        } catch (JwtException e) {
+            throw new IllegalArgumentException("Invalid JWT token");
         }
+    }
 
-        String[] parts = token.split("\\|");
-
-        if (parts.length != 4) {
-            throw new RuntimeException("Invalid token");
+    // ✅ Validity check
+    public boolean validateToken(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            return false; // ✅ important
         }
-
-        String email = parts[1];
-        String role = parts[2];
-        long issuedAt = Long.parseLong(parts[3]);
-
-        // Expiry check
-        long now = System.currentTimeMillis();
-        if ((now - issuedAt) > (expiration * 1000L)) {
-            throw new RuntimeException("Token expired");
-        }
-
-        SimpleClaims claims = new SimpleClaims();
-        claims.put("sub", email);
-        claims.put("role", role);
-
-        return claims;
     }
 }
