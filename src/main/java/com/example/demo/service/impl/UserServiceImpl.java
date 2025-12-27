@@ -1,57 +1,27 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    // 🔥 REQUIRED BY TEST CASES (NO-ARG CONSTRUCTOR)
-    public UserServiceImpl() {
-    }
-
-    // Optional constructor (Spring can still use field injection)
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    // 🔥 REQUIRED METHOD BY TESTS
     @Override
     public User registerUser(User user) {
 
+        // 1. Duplicate email check
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("User already exists with this email");
+            throw new RuntimeException("User already exists");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 2. Password hashing (VERY IMPORTANT)
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        // 3. Save and return
         return userRepository.save(user);
-    }
-
-    // Used by controllers
-    @Override
-    public User saveUser(User user) {
-        return registerUser(user);
-    }
-
-    @Override
-    public User getUser(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
