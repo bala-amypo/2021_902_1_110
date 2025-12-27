@@ -1,3 +1,10 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
+
+import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
@@ -13,15 +20,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
 
-        // 1. Duplicate email check
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("User already exists");
         }
 
-        // 2. Password hashing (VERY IMPORTANT)
+        // password hashing (required by test)
         user.setPassword(encoder.encode(user.getPassword()));
 
-        // 3. Save and return
         return userRepository.save(user);
     }
 }
