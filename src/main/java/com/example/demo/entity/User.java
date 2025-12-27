@@ -22,18 +22,18 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    // ✅ REQUIRED: No-arg constructor
+    
     public User() {
     }
 
-    // ✅ REQUIRED: 3-arg constructor
+    
     public User(String email, String password, String role) {
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
-    // ✅ REQUIRED: 4-arg constructor (USED BY TEST CASES)
+    
     public User(String fullName, String email, String password, String role) {
         this.fullName = fullName;
         this.email = email;
@@ -41,7 +41,7 @@ public class User {
         this.role = role;
     }
 
-    // ===== Getters & Setters =====
+    
 
     public Long getId() {
         return id;
@@ -51,7 +51,7 @@ public class User {
         this.id = id;
     }
 
-    // 🔥 REQUIRED BY TEST CASES
+    
     public String getFullName() {
         return fullName;
     }
@@ -68,7 +68,7 @@ public class User {
         this.email = email;
     }
 
-    // 🔥 REQUIRED BY CONTROLLER
+    
     public String getPassword() {
         return password;
     }
@@ -77,7 +77,7 @@ public class User {
         this.password = password;
     }
 
-    // 🔥 REQUIRED BY CONTROLLER
+    
     public String getRole() {
         return role;
     }
