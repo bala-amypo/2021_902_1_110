@@ -14,7 +14,7 @@ public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private final long EXPIRATION = 1000 * 60 * 60; // 1 hour
 
-    // ✅ Generate token with role
+    // ✅ Generate token
     public String generateToken(String subject, String role) {
         return Jwts.builder()
                 .setSubject(subject)
@@ -25,17 +25,29 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ✅ Used by tests
+    // ✅ Extract username
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
+    // ✅ Extract role
     public String extractRole(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("role", String.class);
+        return extractAllClaims(token).get("role", String.class);
     }
 
-    // 🔥 THIS METHOD FIXES t54_jwtExpiredToken
+    // ✅ Validate token
+    public boolean validateToken(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            return false;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    // 🔥 Core JWT parsing (IMPORTANT for tests)
     private Claims extractAllClaims(String token) {
         try {
             return Jwts.parserBuilder()
@@ -44,20 +56,9 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            // ✅ TEST EXPECTS THIS
-            throw e;
+            throw e; // ✅ required for expired-token test
         } catch (JwtException e) {
             throw new IllegalArgumentException("Invalid JWT token");
-        }
-    }
-
-    // ✅ Validity check
-    public boolean validateToken(String token) {
-        try {
-            extractAllClaims(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            return false; // ✅ important
         }
     }
 }
