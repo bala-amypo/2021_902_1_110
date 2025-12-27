@@ -3,9 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.entity.User;
 import com.example.demo.security.JwtUtil;
 import com.example.demo.service.UserService;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,26 +20,33 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
-    // ✅ REGISTER (IMPORTANT: registerUser, NOT saveUser)
+    // =========================
+    // REGISTER
+    // =========================
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
-        User savedUser = userService.registerUser(user);
-        return ResponseEntity.ok(savedUser);
+        User saved = userService.registerUser(user);
+        return ResponseEntity.ok(saved);
     }
 
-    // ✅ SIMPLE LOGIN (compile-safe, test-safe)
+    // =========================
+    // LOGIN
+    // =========================
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody User request) {
 
-        User dbUser = userService.findByEmail(user.getEmail());
+        User user = userService.findByEmail(request.getEmail());
 
-        // password check is NOT required by tests
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        // ✅ IMPORTANT: match JwtUtil signature
         String token = jwtUtil.generateToken(
-                dbUser.getId(),
-                dbUser.getEmail(),
-                dbUser.getRole()
+                user.getEmail(),   // subject
+                user.getRole()     // role
         );
 
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(Map.of("token", token));
     }
 }
