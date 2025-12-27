@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ✅ register user
+    // Core registration logic
     @Override
     public User register(User user) {
 
@@ -28,14 +28,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    // ✅ REQUIRED by interface
+    // 🔥 REQUIRED BY CONTROLLERS
+    @Override
+    public User saveUser(User user) {
+        return register(user);
+    }
+
     @Override
     public User getUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    // ✅ RETURN TYPE MATCHED (IMPORTANT FIX)
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
